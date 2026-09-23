@@ -2,86 +2,772 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Kelola Kategori</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Kelola Kategori - Admin LP3I</title>
 </head>
+
 <body>
 
-<h1>Kelola Kategori</h1>
+<div
+    style="
+        min-height:100vh;
+        background:#f7f1e8;
+        display:flex;
+    "
+>
 
-<a href="{{ route('admin.dashboard') }}">
-    ← Kembali ke Dashboard
-</a>
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
 
-<br><br>
-
-@if (session('success'))
-    <p>{{ session('success') }}</p>
-@endif
-
-@if ($errors->any())
-    <ul>
-        @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
-        @endforeach
-    </ul>
-@endif
-
-<h2>Tambah Kategori</h2>
-
-<form action="{{ route('admin.kategori.store') }}" method="POST">
-    @csrf
-
-    <label for="nama_kategori">Nama Kategori</label>
-    <input
-        type="text"
-        id="nama_kategori"
-        name="nama_kategori"
-        required
+    <aside
+        style="
+            width:245px;
+            min-height:100vh;
+            background:#3d3438;
+            color:#fff;
+            padding:30px 20px;
+            box-sizing:border-box;
+            display:flex;
+            flex-direction:column;
+            position:fixed;
+            left:0;
+            top:0;
+            bottom:0;
+        "
     >
 
-    <button type="submit">
-        Tambah
-    </button>
-</form>
+        <!-- LOGO -->
 
-<hr>
-
-<h2>Daftar Kategori</h2>
-
-@if ($kategori->count() > 0)
-
-    @foreach ($kategori as $item)
-
-        <div>
-            <strong>{{ $item->nama_kategori }}</strong>
-
-            <a href="{{ route('admin.kategori.edit', $item->id_kategori) }}">
-                Edit
-            </a>
-
-            <form
-                action="{{ route('admin.kategori.destroy', $item->id_kategori) }}"
-                method="POST"
-                style="display:inline;"
-            >
-                @csrf
-                @method('DELETE')
-
-                <button type="submit">
-                    Hapus
-                </button>
-            </form>
+        <div
+            style="
+                font-family:Georgia,serif;
+                font-size:25px;
+                font-weight:bold;
+                margin-bottom:45px;
+                padding:0 10px;
+            "
+        >
+            LP3I<span style="color:#d7a65b;">.</span>
         </div>
 
-        <br>
 
-    @endforeach
+        <!-- LABEL -->
 
-@else
+        <div
+            style="
+                padding:0 10px;
+                font-size:10px;
+                color:#a99b96;
+                letter-spacing:1.5px;
+                margin-bottom:10px;
+            "
+        >
+            ADMINISTRATOR
+        </div>
 
-    <p>Belum ada kategori.</p>
 
-@endif
+        <!-- MENU -->
+
+        <nav>
+
+            <a
+                href="{{ route('admin.dashboard') }}"
+                style="
+                    display:block;
+                    padding:13px 15px;
+                    border-radius:12px;
+                    color:#d8cbc2;
+                    font-size:14px;
+                    text-decoration:none;
+                    margin-bottom:8px;
+                "
+            >
+                Dashboard
+            </a>
+
+
+            <a
+                href="{{ route('admin.karya.index') }}"
+                style="
+                    display:block;
+                    padding:13px 15px;
+                    border-radius:12px;
+                    color:#d8cbc2;
+                    font-size:14px;
+                    text-decoration:none;
+                    margin-bottom:8px;
+                "
+            >
+                Kelola Karya
+            </a>
+
+
+            <a
+                href="{{ route('admin.kategori.index') }}"
+                style="
+                    display:block;
+                    padding:13px 15px;
+                    border-radius:12px;
+                    background:#56494d;
+                    color:#fff;
+                    font-size:14px;
+                    text-decoration:none;
+                    margin-bottom:8px;
+                "
+            >
+                Kelola Kategori
+            </a>
+
+        </nav>
+
+
+        <!-- BOTTOM -->
+
+        <div style="margin-top:auto;">
+
+            <div
+                style="
+                    border-top:1px solid #5b5053;
+                    padding-top:20px;
+                    margin-bottom:15px;
+                    padding-left:10px;
+                    padding-right:10px;
+                "
+            >
+
+                <div
+                    style="
+                        font-size:11px;
+                        color:#bdb0aa;
+                        margin-bottom:4px;
+                    "
+                >
+                    LOGIN SEBAGAI
+                </div>
+
+                <div
+                    style="
+                        font-size:14px;
+                        font-weight:bold;
+                    "
+                >
+                    Admin LP3I
+                </div>
+
+            </div>
+
+
+            <form
+                action="{{ route('admin.logout') }}"
+                method="POST"
+            >
+
+                @csrf
+
+                <button
+                    type="submit"
+                    style="
+                        width:100%;
+                        border:1px solid #66595c;
+                        background:transparent;
+                        color:#d8cbc2;
+                        padding:11px;
+                        border-radius:12px;
+                        cursor:pointer;
+                        font-size:13px;
+                    "
+                >
+                    Logout
+                </button>
+
+            </form>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================= -->
+
+    <main
+        style="
+            margin-left:245px;
+            width:calc(100% - 245px);
+            min-height:100vh;
+            padding:45px 55px;
+            box-sizing:border-box;
+        "
+    >
+
+        <!-- HEADER -->
+
+        <div
+            style="
+                display:flex;
+                justify-content:space-between;
+                align-items:flex-end;
+                margin-bottom:35px;
+                gap:20px;
+            "
+        >
+
+            <div>
+
+                <p
+                    style="
+                        margin:0 0 6px;
+                        color:#a65d4f;
+                        font-size:11px;
+                        font-weight:bold;
+                        letter-spacing:1.5px;
+                        text-transform:uppercase;
+                    "
+                >
+                    Administrator
+                </p>
+
+
+                <h1
+                    style="
+                        margin:0 0 8px;
+                        color:#3d3438;
+                        font-family:Georgia,serif;
+                        font-size:40px;
+                    "
+                >
+                    Kelola Kategori
+                </h1>
+
+
+                <p
+                    style="
+                        margin:0;
+                        color:#766b6b;
+                        font-size:14px;
+                    "
+                >
+                    Atur kategori yang digunakan untuk mengelompokkan karya mahasiswa.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{{ route('admin.dashboard') }}"
+                style="
+                    display:inline-block;
+                    padding:11px 18px;
+                    border:1px solid #d5c7bb;
+                    border-radius:30px;
+                    background:#fffaf4;
+                    color:#766b6b;
+                    text-decoration:none;
+                    font-size:12px;
+                    font-weight:bold;
+                "
+            >
+                ← Dashboard
+            </a>
+
+        </div>
+
+
+        <!-- =========================
+             ALERT SUCCESS
+        ========================= -->
+
+        @if (session('success'))
+
+            <div
+                style="
+                    max-width:850px;
+                    margin-bottom:25px;
+                    background:#e2eadc;
+                    border:1px solid #c5d5bd;
+                    color:#55704d;
+                    padding:14px 17px;
+                    border-radius:13px;
+                    font-size:12px;
+                "
+            >
+                {{ session('success') }}
+            </div>
+
+        @endif
+
+
+        <!-- =========================
+             ALERT ERROR
+        ========================= -->
+
+        @if ($errors->any())
+
+            <div
+                style="
+                    max-width:850px;
+                    margin-bottom:25px;
+                    background:#f7dfda;
+                    border:1px solid #e6b8ad;
+                    color:#8a4439;
+                    padding:14px 17px;
+                    border-radius:13px;
+                    font-size:12px;
+                "
+            >
+
+                @foreach ($errors->all() as $error)
+
+                    <div style="margin-bottom:3px;">
+                        {{ $error }}
+                    </div>
+
+                @endforeach
+
+            </div>
+
+        @endif
+
+
+        <!-- =========================
+             ADD CATEGORY
+        ========================= -->
+
+        <div
+            style="
+                max-width:850px;
+                background:#fffaf4;
+                border:1px solid #e5d9ce;
+                border-radius:22px;
+                padding:28px 30px;
+                margin-bottom:30px;
+                box-shadow:0 10px 30px rgba(61,52,56,0.04);
+            "
+        >
+
+            <div style="margin-bottom:20px;">
+
+                <p
+                    style="
+                        margin:0 0 5px;
+                        color:#a65d4f;
+                        font-size:10px;
+                        font-weight:bold;
+                        letter-spacing:1.2px;
+                        text-transform:uppercase;
+                    "
+                >
+                    Tambahkan
+                </p>
+
+
+                <h2
+                    style="
+                        margin:0;
+                        font-family:Georgia,serif;
+                        color:#3d3438;
+                        font-size:24px;
+                    "
+                >
+                    Kategori Baru
+                </h2>
+
+            </div>
+
+
+            <form
+                action="{{ route('admin.kategori.store') }}"
+                method="POST"
+            >
+
+                @csrf
+
+                <div
+                    style="
+                        display:flex;
+                        gap:12px;
+                        align-items:flex-end;
+                    "
+                >
+
+                    <div style="flex:1;">
+
+                        <label
+                            for="nama_kategori"
+                            style="
+                                display:block;
+                                color:#51484a;
+                                font-size:12px;
+                                font-weight:bold;
+                                margin-bottom:8px;
+                            "
+                        >
+                            Nama Kategori
+                        </label>
+
+
+                        <input
+                            type="text"
+                            id="nama_kategori"
+                            name="nama_kategori"
+                            placeholder="Contoh: Pemrograman"
+                            value="{{ old('nama_kategori') }}"
+                            required
+                            style="
+                                width:100%;
+                                box-sizing:border-box;
+                                padding:13px 15px;
+                                border:1px solid #d9cabb;
+                                border-radius:12px;
+                                background:#fff;
+                                color:#3d3438;
+                                font-size:13px;
+                                outline:none;
+                            "
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        style="
+                            border:none;
+                            padding:13px 23px;
+                            background:#3d3438;
+                            color:#fff;
+                            border-radius:30px;
+                            font-size:12px;
+                            font-weight:bold;
+                            cursor:pointer;
+                            white-space:nowrap;
+                        "
+                    >
+                        + Tambah Kategori
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- =========================
+             CATEGORY LIST
+        ========================= -->
+
+        <div
+            style="
+                max-width:850px;
+                background:#fffaf4;
+                border:1px solid #e5d9ce;
+                border-radius:22px;
+                padding:28px 30px;
+                box-shadow:0 10px 30px rgba(61,52,56,0.04);
+            "
+        >
+
+            <div
+                style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    margin-bottom:22px;
+                "
+            >
+
+                <div>
+
+                    <p
+                        style="
+                            margin:0 0 5px;
+                            color:#a65d4f;
+                            font-size:10px;
+                            font-weight:bold;
+                            letter-spacing:1.2px;
+                            text-transform:uppercase;
+                        "
+                    >
+                        Koleksi
+                    </p>
+
+
+                    <h2
+                        style="
+                            margin:0;
+                            font-family:Georgia,serif;
+                            color:#3d3438;
+                            font-size:24px;
+                        "
+                    >
+                        Daftar Kategori
+                    </h2>
+
+                </div>
+
+
+                <div
+                    style="
+                        width:38px;
+                        height:38px;
+                        border-radius:50%;
+                        background:#f0dfd4;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        color:#a65d4f;
+                        font-family:Georgia,serif;
+                    "
+                >
+                    K
+                </div>
+
+            </div>
+
+
+            @if ($kategori->count() > 0)
+
+                <div
+                    style="
+                        display:flex;
+                        flex-direction:column;
+                        gap:10px;
+                    "
+                >
+
+                    @foreach ($kategori as $item)
+
+                        <div
+                            style="
+                                display:flex;
+                                align-items:center;
+                                justify-content:space-between;
+                                gap:15px;
+                                padding:16px 18px;
+                                border:1px solid #e8ddd3;
+                                border-radius:15px;
+                                background:#fff;
+                            "
+                        >
+
+                            <!-- NAME -->
+
+                            <div
+                                style="
+                                    display:flex;
+                                    align-items:center;
+                                    gap:12px;
+                                "
+                            >
+
+                                <div
+                                    style="
+                                        width:34px;
+                                        height:34px;
+                                        border-radius:10px;
+                                        background:#f4e7dd;
+                                        display:flex;
+                                        align-items:center;
+                                        justify-content:center;
+                                        color:#a65d4f;
+                                        font-size:12px;
+                                        font-weight:bold;
+                                    "
+                                >
+                                    {{ strtoupper(substr($item->nama_kategori, 0, 1)) }}
+                                </div>
+
+
+                                <strong
+                                    style="
+                                        color:#3d3438;
+                                        font-size:14px;
+                                    "
+                                >
+                                    {{ $item->nama_kategori }}
+                                </strong>
+
+                            </div>
+
+
+                            <!-- ACTION -->
+
+                            <div
+                                style="
+                                    display:flex;
+                                    align-items:center;
+                                    gap:8px;
+                                "
+                            >
+
+                                <a
+                                    href="{{ route('admin.kategori.edit', $item->id_kategori) }}"
+                                    style="
+                                        padding:8px 14px;
+                                        border:1px solid #d9cabb;
+                                        border-radius:20px;
+                                        color:#766b6b;
+                                        background:#fffaf4;
+                                        text-decoration:none;
+                                        font-size:11px;
+                                        font-weight:bold;
+                                    "
+                                >
+                                    Edit
+                                </a>
+
+
+                                <form
+                                    action="{{ route('admin.kategori.destroy', $item->id_kategori) }}"
+                                    method="POST"
+                                    style="margin:0;"
+                                >
+
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button
+                                        type="submit"
+                                        style="
+                                            padding:8px 14px;
+                                            border:1px solid #e0bdb5;
+                                            border-radius:20px;
+                                            color:#a65d4f;
+                                            background:#fffaf4;
+                                            font-size:11px;
+                                            font-weight:bold;
+                                            cursor:pointer;
+                                        "
+                                    >
+                                        Hapus
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    @endforeach
+
+                </div>
+
+            @else
+
+                <!-- EMPTY STATE -->
+
+                <div
+                    style="
+                        text-align:center;
+                        padding:45px 20px;
+                        border:1px dashed #d9cabb;
+                        border-radius:16px;
+                    "
+                >
+
+                    <div
+                        style="
+                            width:55px;
+                            height:55px;
+                            border-radius:50%;
+                            background:#f0e5db;
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            margin:0 auto 15px;
+                            color:#a65d4f;
+                            font-family:Georgia,serif;
+                            font-size:20px;
+                        "
+                    >
+                        K
+                    </div>
+
+
+                    <h3
+                        style="
+                            margin:0 0 7px;
+                            color:#3d3438;
+                            font-family:Georgia,serif;
+                            font-size:20px;
+                        "
+                    >
+                        Belum Ada Kategori
+                    </h3>
+
+
+                    <p
+                        style="
+                            margin:0;
+                            color:#817570;
+                            font-size:12px;
+                        "
+                    >
+                        Tambahkan kategori pertama untuk mengelompokkan karya mahasiswa.
+                    </p>
+
+                </div>
+
+            @endif
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div
+            style="
+                max-width:850px;
+                margin-top:45px;
+                padding-top:20px;
+                border-top:1px solid #e1d6cc;
+                color:#9c8b83;
+                font-size:11px;
+            "
+        >
+            LP3I Digital Times — Menuju Kampus Digital 2026
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- RESPONSIVE -->
+
+<style>
+
+@media (max-width: 750px) {
+
+    body > div {
+        display:block !important;
+    }
+
+    aside {
+        position:relative !important;
+        width:100% !important;
+        min-height:auto !important;
+    }
+
+    main {
+        margin-left:0 !important;
+        width:100% !important;
+        padding:30px 20px !important;
+    }
+
+    main > div form > div {
+        flex-direction:column !important;
+        align-items:stretch !important;
+    }
+
+}
+
+</style>
+
 
 </body>
 </html>
